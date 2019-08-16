@@ -29,5 +29,9 @@ It can even be used mid message
 5. On Discord - Under `WordEnd`, Click `Settings` then type the word to use, eg `uwu`
 6. Click `Apply`
 7. Click the `X`
-8. In a message, type `end[` then your words followed at the end by `]` 
+8. In a message, type `end{` then your words followed at the end by `}` 
 9. Once done, hit `Enter` to send
+
+
+## Releases
+Stable builds will be listed under [releases](https://github.com/Aikufurr/WordEnd/releases)
