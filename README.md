@@ -1,3 +1,4 @@
+# MAKE SURE BETTERDISCORD IS INSTALLED
 # WordEnd
 Adds a word of your choice to the end of each word inside `end[]`
 
@@ -9,6 +10,11 @@ It can even be used mid message
 
 `So this is a end[test]`
 
+## Download
+1. Click `Clone or Download`
+2. Click `Download Zip`
+3. Open the `WorldEnd` Folder
+4. Follow `Setting Up` Below
 
 ## Setting up
 1. Go to `User Settings`
