@@ -84,7 +84,7 @@ class WordEnd {
 
         try {
             PluginUtilities.checkForUpdate(this.getName(), this.getVersion(),
-                "https://raw.githubusercontent.com/Aikufurr/WordWu/master/WordWu.plugin.js");
+                "https://raw.githubusercontent.com/Aikufurr/WordEnd/master/WordEnd.plugin.js");
         }
         catch (err) {
             this.error("Couldn't update plugin.");
