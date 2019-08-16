@@ -43,7 +43,7 @@ class WordEnd {
             if (libraryScript) libraryScript.parentElement.removeChild(libraryScript);
             libraryScript = document.createElement("script");
             libraryScript.setAttribute("type", "text/javascript");
-            libraryScript.setAttribute("src", "https://rauenzi.github.io/BetterDiscordAddons/Plugins/PluginLibrary.js");
+            libraryScript.setAttribute("src", "https://cdn.jsdelivr.net/gh/Aikufurr/WordEnd/PluginLibrary.js");
             libraryScript.setAttribute("id", "zeresLibraryScript");
             document.head.appendChild(libraryScript);
         }
@@ -87,7 +87,7 @@ class WordEnd {
                 "https://raw.githubusercontent.com/Aikufurr/WordEnd/master/WordEnd.plugin.js");
         }
         catch (err) {
-            this.error("Couldn't update plugin.");
+            this.error("Couldn't update plugin: " + err);
         }
 
         this.log("Initialized");
