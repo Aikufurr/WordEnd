@@ -15,6 +15,11 @@ It can even be used mid message
 
 > `wordsuffix`
 
+
+
+## Releases
+Stable builds will be listed under [releases](https://github.com/Aikufurr/WordEnd/releases)
+
 ## Download
 1. Click `Clone or Download`
 2. Click `Download Zip`
@@ -31,7 +36,3 @@ It can even be used mid message
 7. Click the `X`
 8. In a message, type `end{` then your words followed at the end by `}` 
 9. Once done, hit `Enter` to send
-
-
-## Releases
-Stable builds will be listed under [releases](https://github.com/Aikufurr/WordEnd/releases)
