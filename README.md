@@ -1,14 +1,19 @@
 # MAKE SURE BETTERDISCORD IS INSTALLED
 # WordEnd
-Adds a word of your choice to the end of each word inside `end[]`
+Adds a word of your choice to the end of each word inside `end{}`
 
 ## Usage
 
-`end[your message goes here]`
+> `end{your message goes here}`
 
 It can even be used mid message
 
-`So this is a end[test]`
+> `So this is a end{test}`
+
+#### If `In-Line` mode is enabled, *check settings*, it will act as following:
+>> `suffix{word}`
+
+> `wordsuffix`
 
 ## Download
 1. Click `Clone or Download`
