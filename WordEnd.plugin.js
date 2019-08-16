@@ -3,8 +3,8 @@
 
 class WordEnd {
     getName() { return "WordEnd"; }
-    getDescription() { return "Adds a word of your choice to the end of each word. Usage: end[text here]\nReport all issues to https://github.com/Aikufurr/WordEnd/issues"; }
-    getVersion() { return "0.1.0"; }
+    getDescription() { return "Adds a word of your choice to the end of each word. Usage: end{text here}\nReport all issues to https://github.com/Aikufurr/WordEnd/issues"; }
+    getVersion() { return "0.2.0"; }
     getAuthor() { return "Aikufurr"; }
     
     constructor() {
@@ -27,7 +27,6 @@ class WordEnd {
 
     getEndWord(){
         var EndWord = BdApi.loadData('WordEnd', 'ending') || "";
-        this.log(EndWord)
         return EndWord
     }
 
@@ -35,8 +34,7 @@ class WordEnd {
         this.log('Starting');
 
         this.EndWord = this.getEndWord();
-
-        this.log("Ending word: " + this.EndWord);
+        this.InLine = BdApi.loadData('WordEnd', 'InLine') || "off";
 
         let libraryScript = document.getElementById('zeresLibraryScript');
         if (!libraryScript || (window.ZeresLibrary && window.ZeresLibrary.isOutdated)) {
@@ -84,10 +82,10 @@ class WordEnd {
 
         try {
             PluginUtilities.checkForUpdate(this.getName(), this.getVersion(),
-                "https://raw.githubusercontent.com/Aikufurr/WordEnd/master/WordEnd.plugin.js");
+                "https://cdn.jsdelivr.net/gh/Aikufurr/WordEnd/WordEnd.plugin.js");
         }
         catch (err) {
-            this.error("Couldn't update plugin: " + err);
+            this.error("Couldn't update");
         }
 
         this.log("Initialized");
@@ -105,7 +103,7 @@ class WordEnd {
             'color: #F77; text-shadow: 0 0 1px black, 0 0 2px black, 0 0 3px black;', '');
     }
 
-    // check on switch, in case BD updates emotes file while client is running
+    
     onSwitch() {  }
 
     update() {
@@ -123,25 +121,67 @@ class WordEnd {
                 // If we pressed Tab, perform corruption only if the cursor is right after the closing braces.
                 if (e.which == 9 && !value.substring(0, inputBox.selectionEnd).endsWith(':'))
                     return;
-                // Markup format:
-                // t:<text>:
-                // text: text to generate emoji from
-                let regex = /end\[(.*?)\]/g;
-                if (regex.test(value)) {
-                    value = value.replace(regex, this.doTexty.bind(this));
-                    if (value == "") {
-                        PluginUtilities.showToast("This message would exceed the 2000-character limit.\nReduce corruption amount or shorten text.\n\nLength including corruption: " + value.length, {type: 'error'});
-                        e.preventDefault();
-                        return;
-                    }
-                    inputBox.focus();
-                    inputBox.select();
-                    document.execCommand("insertText", false, value);
 
-                    // If we're using tab-completion, keep the cursor position, in case we were in the middle of a line
-                    if (e.which == 9) {
-                        let newCursorPos = value.length - tailLen;
-                        inputBox.setSelectionRange(newCursorPos, newCursorPos);
+                this.InLine = BdApi.loadData('WordEnd', 'InLine') || "off";
+
+                if (this.InLine == "off"){
+                    let regex = /end{(.*?)}/g;
+                    if (regex.test(value)) {
+                        value = value.replace(regex, this.replaceWords.bind(this));
+                        if (value == "") {
+                            PluginUtilities.showToast("This message would exceed the 2000-character limit.\n\nLength including corruption: " + value.length, {type: 'error'});
+                            e.preventDefault();
+                            return;
+                        }
+                        inputBox.focus();
+                        inputBox.select();
+                        document.execCommand("insertText", false, value);
+
+                        // If we're using tab-completion, keep the cursor position, in case we were in the middle of a line
+                        if (e.which == 9) {
+                            let newCursorPos = value.length - tailLen;
+                            inputBox.setSelectionRange(newCursorPos, newCursorPos);
+                        }
+                    }
+                } else {
+                    // the hard part
+                    var regex = " (.*?){";
+                    var findEnding = new RegExp(regex,"g");
+                    if (findEnding.test(value)){}
+                    else{
+                        var regex = "^(.*?){";
+                        var findEnding = new RegExp(regex,"g")
+                    }
+                    let Ending = value.match(findEnding);
+                    Ending = Ending.toString().replace("{", "")
+                    var regex = Ending+"{(.*?)}";
+                    var re = new RegExp(regex,"g");
+                    if (re.test(value)){
+                        let output = '';
+                        let text = value.match(re).toString().replace(Ending+"{", "").replace("}", "");
+
+                        output = text.split(" ").join(Ending + " ");
+                        output += Ending;
+
+                        if (output.length > 1800)
+                        {
+                            output = "";
+                        }
+                        value = value.replace(re, output);
+                        if (value == "") {
+                            PluginUtilities.showToast("This message would exceed the 2000-character limit.\n\nLength including corruption: " + value.length, {type: 'error'});
+                            e.preventDefault();
+                            return;
+                        }
+                        inputBox.focus();
+                        inputBox.select();
+                        document.execCommand("insertText", false, value);
+
+                        // If we're using tab-completion, keep the cursor position, in case we were in the middle of a line
+                        if (e.which == 9) {
+                            let newCursorPos = value.length - tailLen;
+                            inputBox.setSelectionRange(newCursorPos, newCursorPos);
+                        }
                     }
                 }
             }
@@ -150,12 +190,9 @@ class WordEnd {
         this.initialized = true;
     }
 
-    doTexty(match, text, offset, string, isReaction) {
+    replaceWords(match, text, offset, string, isReaction) {
         this.EndWord = this.getEndWord();
-        this.log('text: ' + text);
-
         let output = '';
-
         output = text.split(" ").join(this.EndWord + " ")
         output += this.EndWord
 
@@ -163,7 +200,6 @@ class WordEnd {
         {
             return ""
         }
-        this.log("Returning: " + output)
         return output;
     }
     getSettingsPanel() {
@@ -174,6 +210,19 @@ class WordEnd {
         const button = document.createElement('button');
         const se = document.createElement('script');
         const jq = document.createElement('script');
+        const slider = document.createElement('div')
+        this.InLine = BdApi.loadData('WordEnd', 'InLine') || "off";
+        if (this.InLine == "off"){
+        slider.innerHTML = `<br><label class="switch">
+        <input id="WordEndSlider" type="checkbox">
+        <span class="slider round">In-line Mode - suffix{text goes here}</span>
+        </label>`;
+        } else {
+            slider.innerHTML = `<br><label class="switch">
+            <input id="WordEndSlider" type="checkbox" checked>
+            <span class="slider round">In-line Mode - suffix{text goes here}</span>
+            </label>`;
+        }
         se.setAttribute('type', 'text/javascript');
         se.innerHTML = "$(function() {$('#input1').on('keypress', function(e) {if (e.which == 32) return false;});});";
         jq.setAttribute('type', 'text/javascript');
@@ -187,17 +236,22 @@ class WordEnd {
         words.placeholder = 'word to add to the end of each word, eg uwu';
         words.value = this.EndWord
         words.style.width = '100%';
-        words.style.minHeight = '6ch';
+        words.style.minHeight = '2ch';
         words.setAttribute("id", "input1");
         button.addEventListener('click', _ => {
             this.EndWord = words.value
+            this.InLine = $('#WordEndSlider:checked').val() || "off";
+            this.log("Value: " + this.InLine)
             BdApi.saveData('WordEnd', 'ending', this.EndWord);
+            BdApi.saveData('WordEnd', 'InLine', this.InLine);
             this.EndWord = BdApi.loadData('WordEnd', 'ending') || "";
+            this.InLine = BdApi.loadData('WordEnd', 'InLine') || "off";
         });
         div.appendChild(wordsT);
         div.appendChild(words);
         div.appendChild(br);
         div.appendChild(button);
+        div.appendChild(slider)
         document.head.appendChild(se);
         document.head.appendChild(jq);
         return div;
